@@ -1070,25 +1070,6 @@
   }();
 
   /**
-   * @type {ILenisOptions}
-   */
-  var defaultLenisOptions = {
-    wrapper: window,
-    content: document.documentElement,
-    lerp: 0.1,
-    duration: 1.2,
-    orientation: 'vertical',
-    gestureOrientation: 'vertical',
-    smoothWheel: true,
-    smoothTouch: false,
-    wheelMultiplier: 1,
-    touchMultiplier: 2,
-    normalizeWheel: true,
-    easing: function easing(t) {
-      return Math.min(1, 1.001 - Math.pow(2, -10 * t));
-    } // https://www.desmos.com/calculator/brs54l4xou
-  };
-  /**
    * Locomotive Scroll
    *
    * Detection of elements in viewport & smooth scrolling with parallax.
@@ -1131,7 +1112,22 @@
       this._onResizeBind = void 0;
       this._onScrollToBind = void 0;
       // Arguments
-      this.lenisOptions = _extends({}, defaultLenisOptions, lenisOptions);
+      this.lenisOptions = _extends({
+        wrapper: window,
+        content: document.documentElement,
+        lerp: 0.1,
+        duration: 1.2,
+        orientation: 'vertical',
+        gestureOrientation: 'vertical',
+        smoothWheel: true,
+        smoothTouch: false,
+        wheelMultiplier: 1,
+        touchMultiplier: 2,
+        normalizeWheel: true,
+        easing: function easing(t) {
+          return Math.min(1, 1.001 - Math.pow(2, -10 * t));
+        }
+      }, lenisOptions);
       Object.assign(this, {
         lenisOptions: lenisOptions,
         modularInstance: modularInstance,
@@ -1204,6 +1200,7 @@
      * Lifecyle - Destroy instance.
      */;
     _proto.destroy = function destroy() {
+      var _this2 = this;
       // Stop raf
       this.stop();
       // Unbind Events
@@ -1211,7 +1208,9 @@
       // Destroy Lenis
       this.lenisInstance.destroy();
       // Destroy Core
-      this.coreInstance.destroy();
+      requestAnimationFrame(function () {
+        _this2.coreInstance.destroy();
+      });
     }
     /**
      * Events - Subscribe events to listen.
@@ -1246,34 +1245,34 @@
      * Events - Subscribe scrollTo events to listen.
      */;
     _proto._bindScrollToEvents = function _bindScrollToEvents($container) {
-      var _this2 = this;
+      var _this3 = this;
       var $rootContainer = $container ? $container : this.lenisInstance.rootElement;
       var $scrollToElements = $rootContainer == null ? void 0 : $rootContainer.querySelectorAll('[data-scroll-to]');
       ($scrollToElements == null ? void 0 : $scrollToElements.length) && $scrollToElements.forEach(function ($el) {
-        $el.addEventListener('click', _this2._onScrollToBind, false);
+        $el.addEventListener('click', _this3._onScrollToBind, false);
       });
     }
     /**
      * Events - Unsubscribe scrollTo listened events.
      */;
     _proto._unbindScrollToEvents = function _unbindScrollToEvents($container) {
-      var _this3 = this;
+      var _this4 = this;
       var $rootContainer = $container ? $container : this.lenisInstance.rootElement;
       var $scrollToElements = $rootContainer == null ? void 0 : $rootContainer.querySelectorAll('[data-scroll-to]');
       ($scrollToElements == null ? void 0 : $scrollToElements.length) && $scrollToElements.forEach(function ($el) {
-        $el.removeEventListener('click', _this3._onScrollToBind, false);
+        $el.removeEventListener('click', _this4._onScrollToBind, false);
       });
     }
     /**
      * Callback - Resize callback.
      */;
     _proto._onResize = function _onResize() {
-      var _this4 = this;
+      var _this5 = this;
       // Waiting the next frame to get the new current scroll value return by Lenis
       requestAnimationFrame(function () {
-        var _this4$coreInstance;
-        (_this4$coreInstance = _this4.coreInstance) == null ? void 0 : _this4$coreInstance.onResize({
-          currentScroll: _this4.lenisInstance.scroll
+        var _this5$coreInstance;
+        (_this5$coreInstance = _this5.coreInstance) == null ? void 0 : _this5$coreInstance.onResize({
+          currentScroll: _this5.lenisInstance.scroll
         });
       });
     }
@@ -1298,7 +1297,7 @@
       if (!$target) return;
       var target = $target.getAttribute('data-scroll-to-href') || $target.getAttribute('href');
       var offset = $target.getAttribute('data-scroll-to-offset') || 0;
-      var duration = $target.getAttribute('data-scroll-to-duration') || this.lenisOptions.duration || defaultLenisOptions.duration;
+      var duration = $target.getAttribute('data-scroll-to-duration') || this.lenisOptions.duration;
       target && this.scrollTo(target, {
         offset: typeof offset === 'string' ? parseInt(offset) : offset,
         duration: typeof duration === 'string' ? parseInt(duration) : duration
@@ -1341,14 +1340,14 @@
      */;
     _proto.addScrollElements = function addScrollElements($newContainer) {
       var _this$coreInstance3,
-        _this5 = this;
+        _this6 = this;
       if (!$newContainer) {
         console.error('Please provide a DOM Element as $newContainer');
         return;
       }
       (_this$coreInstance3 = this.coreInstance) == null ? void 0 : _this$coreInstance3.addScrollElements($newContainer);
       requestAnimationFrame(function () {
-        _this5._bindScrollToEvents($newContainer);
+        _this6._bindScrollToEvents($newContainer);
       });
     }
     /**
@@ -1380,10 +1379,10 @@
      *
      */;
     _proto._raf = function _raf() {
-      var _this6 = this;
+      var _this7 = this;
       this._onRenderBind();
       this.rafInstance = requestAnimationFrame(function () {
-        return _this6._raf();
+        return _this7._raf();
       });
     };
     return LocomotiveScroll;
