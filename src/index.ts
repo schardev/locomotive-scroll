@@ -164,7 +164,9 @@ export default class LocomotiveScroll {
         // Destroy Lenis
         this.lenisInstance.destroy();
         // Destroy Core
-        this.coreInstance.destroy();
+        requestAnimationFrame(() => {
+            this.coreInstance.destroy();
+        });
     }
 
     /**
