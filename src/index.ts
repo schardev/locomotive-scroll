@@ -12,24 +12,6 @@ import {
 } from './types';
 
 /**
- * @type {ILenisOptions}
- */
-const defaultLenisOptions: ILenisOptions = {
-    wrapper: window,
-    content: document.documentElement,
-    lerp: 0.1,
-    duration: 1.2,
-    orientation: 'vertical',
-    gestureOrientation: 'vertical',
-    smoothWheel: true,
-    smoothTouch: false,
-    wheelMultiplier: 1,
-    touchMultiplier: 2,
-    normalizeWheel: true,
-    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // https://www.desmos.com/calculator/brs54l4xou
-};
-
-/**
  * Locomotive Scroll
  *
  * Detection of elements in viewport & smooth scrolling with parallax.
@@ -73,7 +55,21 @@ export default class LocomotiveScroll {
         destroyCustomTicker,
     }: ILocomotiveScrollOptions = {}) {
         // Arguments
-        this.lenisOptions = { ...defaultLenisOptions, ...lenisOptions };
+        this.lenisOptions = {
+            wrapper: window,
+            content: document.documentElement,
+            lerp: 0.1,
+            duration: 1.2,
+            orientation: 'vertical',
+            gestureOrientation: 'vertical',
+            smoothWheel: true,
+            smoothTouch: false,
+            wheelMultiplier: 1,
+            touchMultiplier: 2,
+            normalizeWheel: true,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // https://www.desmos.com/calculator/brs54l4xou
+            ...lenisOptions,
+        };
 
         Object.assign(this, {
             lenisOptions,
@@ -275,8 +271,7 @@ export default class LocomotiveScroll {
         const offset = $target.getAttribute('data-scroll-to-offset') || 0;
         const duration =
             $target.getAttribute('data-scroll-to-duration') ||
-            this.lenisOptions.duration ||
-            defaultLenisOptions.duration;
+            this.lenisOptions.duration;
 
         target &&
             this.scrollTo(target, {
